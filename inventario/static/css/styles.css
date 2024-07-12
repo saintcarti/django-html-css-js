@@ -5,13 +5,7 @@
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
-body {
-    background-image: url('../img/fondoTeCuidoSecurity.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-}
+
 
 .content, .main-content, .container {
     border: none;

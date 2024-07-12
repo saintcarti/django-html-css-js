@@ -7,6 +7,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Nombre de cliente</th>
                 <th>Código Boleta</th>
                 <th>Nombre Producto</th>
                 <th>Precio</th>
@@ -18,6 +19,7 @@
             {% for prod in productos%}
 
             <tr>
+                <td>{{ user.username }}</td>
                 <td>{{ prod.id_boleta }}</td>
                 <td>{{ prod.id_producto.nombreCamara }}</td>
                 <td>${{ prod.id_producto.precio }}</td>
