@@ -1,0 +1,131 @@
+{%extends 'base.html'%}
+{%block contenido%}
+{%load static%}
+
+
+    <div class="container">
+        <h2>Editar camara {{camara.idCamara}} {{camara.nombreCamara}}</h2>
+        <form method="post" id="formulario_editar" action="" enctype="multipart/form-data">
+            {%csrf_token%}
+
+            <div class="mb-3">
+                <label  class="form-label" for="camaraform.field.name"> Nombre de camara</label>
+                <input type="text" class="form-control" name="nombreCamara" id="nombreCamara" value="{{camara.nombreCamara}}">
+                <small class="text-danger" id="codigo-error"></small>
+            </div>
+            <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Precio</label>
+                <input type="text" class="form-control" name="precio" id="precio" value="{{camara.precio}}">
+                <small class="text-danger" id="precio-error"></small>
+            </div>
+              <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Marca</label>
+                <select name="marca" class="form-select">
+                    {%for marca in marcas%}
+                    {% if marca == camara.marca.idMarca %}
+                        <option value="{{marca.idMarca}}">{{marca.nombreMarca}}</option>
+                    {% else %}
+                        <option value="{{marca.idMarca}}" selected>{{marca.nombreMarca}}</option>
+                    {% endif %}
+                    {%endfor%}
+                </select>
+                <small class="text-danger" id="marca-error"></small>
+            </div>
+              <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Categoria:</label>
+                <select name="categoria" class="form-select">
+                    {%for categoria in categorias%}
+                        {% if categoria == camara.categoria.idCategoria %}
+                            <option value="{{categoria.idCategoria}}"selected>{{categoria.nombreCategoria}}</option>
+                        {% else %}
+                            <option value="{{categoria.idCategoria}}" >{{categoria.nombreCategoria}}</option>
+                        {% endif %}
+                    {%endfor%}
+                </select>
+                <small class="text-danger" id="categoria-error"></small>
+            </div>
+              <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Descripcion</label>
+                <textarea name="descripcion" id="descripcion" class="form-control" cols="10" rows="5">{{camara.descripcion}}</textarea>
+                <small class="text-danger" id="descripcion-error"></small>
+              </div> 
+              <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Imagen</label>
+                <input type="file" class="form-control" name="imagen" id="imagen" value="{{camara.imagen}}">
+                <small class="text-danger" id="imagen-error"></small>
+              </div>
+            <div class="mb-3">
+                <label for="{{ camaraform.field.name }}">Stock</label>
+                <input type="text" class="form-control" name="stock" id="stock" value="{{camara.stock}}">
+                <small class="text-danger" id="stock-error"></small>
+            </div>
+
+            <input type="submit" value="Editar" class="btn btn-primary">
+            <a style="margin-left: 20px;" href="{%url 'listado_camaras'%}" class="btn btn-dark">Volver</a>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script>
+        
+        
+        
+        $(document).ready(function(){
+            $("#formulario_editar").validate({
+                rules: {
+                    nombreCamara: {
+                        required: true,
+                        minlength: 3
+                    },
+                    precio: {
+                        required: true,
+                        number: true
+                    },
+                    marca: {
+                        required: true
+                    },
+                    categoria: {
+                        required: true
+                    },
+                    descripcion: {
+                        required: true
+                    },
+                    imagen: {
+                        required: true
+                    },
+                    stock: {
+                        required: true,
+                        number: true
+                    }
+                },
+                messages: {
+                    nombreCamara: {
+                        required: "Por favor, ingrese un nombre de camara",
+                        minlength: "El nombre de camara debe tener al menos 3 caracteres"
+                    },
+                    precio: {
+                        required: "Por favor, ingrese un precio",
+                        number: "Por favor, ingrese un precio válido"
+                    },
+                    marca: {
+                        required: "Por favor, seleccione una marca"
+                    },
+                    categoria: {
+                        required: "Por favor, seleccione una categoria"
+                    },
+                    descripcion: {
+                        required: "Por favor, ingrese una descripcion"
+                    },
+                    imagen: {
+                        required: "Por favor, seleccione una imagen"
+                    },
+                    stock: {
+                        required: "Por favor, ingrese un stock",
+                        number: "Por favor, ingrese un stock válido"
+                    }
+                }
+            });
+        });
+    </script>
+
+{%endblock%}
