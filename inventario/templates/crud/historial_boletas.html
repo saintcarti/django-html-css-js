@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% block contenido %}
+<h2 class="my-4 text-center">Historial de Boletas</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Número de Boleta</th>
+        <th>Fecha</th>
+        <th>Monto</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for boleta in boletas %}
+      <tr>
+        <td>{{ boleta.numero }}</td>
+        <td>{{ boleta.fecha }}</td>
+        <td>{{ boleta.monto }}</td>
+        <td>{{ boleta.estado }}</td>
+        <td>
+          <a
+            href="{% url 'detalle_boleta' boleta.id %}"
+            class="btn btn-info btn-sm"
+            >Ver Detalle</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
