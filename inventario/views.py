@@ -165,3 +165,10 @@ def detalleCarrito(request):
     carrito = request.session.get('carrito', {})
     carrito_vacio = not bool(carrito)  # True si el carrito está vacío
     return render(request, 'carrito/detallecarrito.html', {'carrito_vacio': carrito_vacio, 'carrito': carrito})
+
+
+
+@login_required
+def historial_boletas(request):
+    boleta=DetalleBoleta.objects.all()
+    return render(request, 'crud/historial_boletas.html', {'boleta':boleta})

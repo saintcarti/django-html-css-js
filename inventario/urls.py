@@ -14,6 +14,11 @@ urlpatterns = [
     path('mercado/restar/<id>/',restar_producto, name='restar'),
     path('mercado/limpiar/',limpiar_carrito, name='limpiar'),
     path('mercado/generarBoleta/',generarBoleta, name='generarBoleta'),
+    path('historial/', historial_boletas, name='historial_boletas')
 
 
 ]
+
+
+
+
