@@ -36,7 +36,7 @@
                         {%if camara.imagen%} 
                             <td style= "padding: 20px;"><img  src="{{camara.imagen.url}}" style="height: 70px; width: 70px; border-radius: 8px;"></td>
                         {%else%}
-                            <td style= "padding: 20px;"><img src="{%static 'img/sinfoto.jpg'%}"></td>
+                            <td style= "padding: 20px;"><img src="{%static 'img/sinfoto.jpg'%}" style="height: 70px; width: 70px; border-radius: 8px;"></td>
                         {%endif%}
                         <td style= "padding: 20px;"scope="row">{{camara.stock}}</td>
                         <td ><a href="{% url 'detalle_camara' id=camara.idCamara %}"><img src="{%static 'img/detalle.png'%}" style="max-width: 30px; max-height: 30px;"></a></td>

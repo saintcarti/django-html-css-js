@@ -74,8 +74,12 @@
 <div class="container-mercado">
   {% for camara in camaras %}
   <div class="card">
-    <img src="{{ camara.imagen.url }}" class="card-img-top" alt="Imagen de {{ camara.nombreCamara }}"/>
-    <div class="card-body">
+    {%if camara.imagen%}
+      <img src="{{ camara.imagen.url }}" class="card-img-top" alt="Imagen de {{ camara.nombreCamara }}"/>
+    {%else%}
+      <img src="{% static 'img/sinfoto.jpg' %}" class="card-img-top" alt="Imagen no disponible"/>
+    {%endif%}
+      <div class="card-body">
       <h5 class="card-title" style="text-align: center">{{ camara.nombreCamara }}</h5>
       <p class="card-text" style="text-align: center">{{ camara.descripcion }}</p>
       <p class="card-text" style="text-align: center">${{ camara.precio }}</p>

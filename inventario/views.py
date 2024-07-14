@@ -5,6 +5,8 @@ from .compra import Carrito
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+import requests
+from django.urls import reverse
 
 
 def admin_required(login_url=None):
@@ -78,16 +80,49 @@ def editar_camara(request,id):
     return render(request,'crud/editar_camara.html',context)
 
 
+
 def crear_camara(request):
     if request.method == 'POST':
-        camaraform = CamaraForm(request.POST,request.FILES)
+        camaraform = CamaraForm(request.POST, request.FILES)
         if camaraform.is_valid():
-            camaraform.save()
-            return redirect('listado_camaras')
+            # Verificar si ya existe un producto con el mismo nombre y marca
+            nombre_camara = camaraform.cleaned_data['nombreCamara']
+            marca = camaraform.cleaned_data['marca']
+            existe_producto = Camara.objects.filter(nombreCamara=nombre_camara, marca=marca).exists()
+
+            if not existe_producto:
+                # Guardar el producto localmente
+                nueva_camara = camaraform.save()
+
+                # Preparar los datos para enviar a la API
+                data = {
+                    'nombreCamara': nueva_camara.nombreCamara,
+                    'precio': nueva_camara.precio,
+                    'marca': nueva_camara.marca.idMarca,
+                    'categoria': nueva_camara.categoria.idCategoria,
+                    'descripcion': nueva_camara.descripcion,
+                    'stock': nueva_camara.stock,
+                    # Asegúrate de ajustar según los campos exactos esperados por tu API
+                }
+
+                # Realizar la solicitud POST a la API
+                url = 'http://localhost:8000/inventario/api/list/'  # Ajusta la URL según tu configuración
+                response = requests.post(url, data=data)
+
+                if response.status_code == 201:  # Creado en la API
+                    return redirect('listado_camaras')  # Redirige al listado de cámaras
+
+                # Si no se crea correctamente en la API, eliminar la entrada local
+                nueva_camara.delete()
+
+            else:
+                # Si el producto ya existe, mostrar un mensaje o manejar la situación según tu caso
+                messages.error(request, 'Ya existe un producto con este nombre y marca.')
+
     else:
         camaraform = CamaraForm()
 
-    return render(request,'crud/crear.html',{'camaraform':camaraform})
+    return render(request, 'crud/crear.html', {'camaraform': camaraform})
 
 def eliminar_camara(request,id):
     camaraEliminada = Camara.objects.get(idCamara=id)
