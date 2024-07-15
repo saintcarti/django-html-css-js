@@ -10,24 +10,28 @@ class Carrito:
         self.carrito = carrito
 
     def agregar(self, camara):
-        if camara.stock > -1:    
+        if camara.stock > 0:
             if str(camara.idCamara) not in self.carrito.keys():
-            
+                if camara.imagen:
+                    imagen_url = camara.imagen.url
+                else:
+                    imagen_url = None
+                
                 self.carrito[str(camara.idCamara)] = {
-                'idCamara': camara.idCamara,
-                'nombreCamara': camara.nombreCamara,
-                'precio': camara.precio,
-                'cantidad': 1,
-                'imagen': camara.imagen.url,
-                'total': camara.precio,
-            }
+                    'idCamara': camara.idCamara,
+                    'nombreCamara': camara.nombreCamara,
+                    'precio': camara.precio,
+                    'cantidad': 1,
+                    'imagen': imagen_url,
+                    'total': camara.precio,
+                }
                 camara.stock -= 1
                 camara.save()
             else:
                 for key, value in self.carrito.items():
                     if key == str(camara.idCamara):
                         if camara.stock > 0:
-                            value["cantidad"] = value["cantidad"] + 1
+                            value["cantidad"] += 1
                             value["precio"] = camara.precio
                             value["total"] = camara.precio * value["cantidad"]
                             camara.stock -= 1

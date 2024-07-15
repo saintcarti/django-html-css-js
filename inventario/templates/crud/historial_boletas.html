@@ -1,33 +1,27 @@
-{% extends 'base.html' %} {% block contenido %}
-<h2 class="my-4 text-center">Historial de Boletas</h2>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Número de Boleta</th>
-        <th>Fecha</th>
-        <th>Monto</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for boleta in boletas %}
-      <tr>
-        <td>{{ boleta.numero }}</td>
-        <td>{{ boleta.fecha }}</td>
-        <td>{{ boleta.monto }}</td>
-        <td>{{ boleta.estado }}</td>
-        <td>
-          <a
-            href="{% url 'detalle_boleta' boleta.id %}"
-            class="btn btn-info btn-sm"
-            >Ver Detalle</a
-          >
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h2>Compras de Todos los Clientes</h2>
+    {% for compra in compras %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>Boleta N°: {{ compra.boleta.id_boleta }}</strong>
+                <span class="float-right">Fecha: {{ compra.boleta.fechaCompra }}</span>
+                <br>
+                <strong>Cliente:</strong> {{ compra.usuario.username }} 
+            </div>
+            <div class="card-body">
+                <strong>Producto: {{ compra.producto }}</strong>
+                <br>
+                <strong>Subtotal: {{ compra.subtotal }}</strong>
+                <br>
+                <strong>Cantidad: {{ compra.cantidad }}</strong>
+            </div>
+            <div class="card-footer">
+                <strong>Total:</strong> ${{ compra.boleta.total }}
+            </div>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}

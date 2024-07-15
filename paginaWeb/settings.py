@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'inventario',
     'crispy_forms',
     'crispy_bootstrap4',
-    'rest_framework',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -86,7 +85,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'OPTIONS': {
+            'timeout': 30,  # Timeout para operaciones de bloqueo en segundos
+        },
+    },
 }
 
 

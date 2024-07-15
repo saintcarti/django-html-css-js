@@ -82,8 +82,7 @@
               <ul class="dropdown-menu">
                 <li>
                   <a class="dropdown-item" href="{% url 'login' %}"
-                    >Iniciar sesión</a
-                  >
+                    >Iniciar sesión</a>
                 </li>
               </ul>
             </li>
@@ -104,18 +103,19 @@
             id="formulario_logout"
             class="d-flex"
             method="post"
-            action="{% url 'logout' %}"
-          >
+            action="{% url 'logout' %}">
             {% csrf_token %}
             <button class="btn btn-outline-danger" type="submit">
               Cerrar sesión
             </button>
+            
           </form>
           <li class="nav-item">
             <span class="navbar-text ms-3"
               >Bienvenido, {{ user.username }}!</span
             >
           </li>
+          
           {% endif %}
         </div>
       </div>

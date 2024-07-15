@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 import requests
 from django.urls import reverse
-
+from django.db import transaction
 
 def admin_required(login_url=None):
     return user_passes_test(lambda u: u.is_active and u.is_staff, login_url=login_url)
@@ -83,46 +83,14 @@ def editar_camara(request,id):
 
 def crear_camara(request):
     if request.method == 'POST':
-        camaraform = CamaraForm(request.POST, request.FILES)
+        camaraform = CamaraForm(request.POST,request.FILES)
         if camaraform.is_valid():
-            # Verificar si ya existe un producto con el mismo nombre y marca
-            nombre_camara = camaraform.cleaned_data['nombreCamara']
-            marca = camaraform.cleaned_data['marca']
-            existe_producto = Camara.objects.filter(nombreCamara=nombre_camara, marca=marca).exists()
-
-            if not existe_producto:
-                # Guardar el producto localmente
-                nueva_camara = camaraform.save()
-
-                # Preparar los datos para enviar a la API
-                data = {
-                    'nombreCamara': nueva_camara.nombreCamara,
-                    'precio': nueva_camara.precio,
-                    'marca': nueva_camara.marca.idMarca,
-                    'categoria': nueva_camara.categoria.idCategoria,
-                    'descripcion': nueva_camara.descripcion,
-                    'stock': nueva_camara.stock,
-                    # Asegúrate de ajustar según los campos exactos esperados por tu API
-                }
-
-                # Realizar la solicitud POST a la API
-                url = 'http://localhost:8000/inventario/api/list/'  # Ajusta la URL según tu configuración
-                response = requests.post(url, data=data)
-
-                if response.status_code == 201:  # Creado en la API
-                    return redirect('listado_camaras')  # Redirige al listado de cámaras
-
-                # Si no se crea correctamente en la API, eliminar la entrada local
-                nueva_camara.delete()
-
-            else:
-                # Si el producto ya existe, mostrar un mensaje o manejar la situación según tu caso
-                messages.error(request, 'Ya existe un producto con este nombre y marca.')
-
+            camaraform.save()
+            return redirect('listado_camaras')
     else:
         camaraform = CamaraForm()
 
-    return render(request, 'crud/crear.html', {'camaraform': camaraform})
+    return render(request,'crud/crear.html',{'camaraform':camaraform})
 
 def eliminar_camara(request,id):
     camaraEliminada = Camara.objects.get(idCamara=id)
@@ -152,8 +120,9 @@ def limpiar_carrito(request):
     carrito_compra.limpiar()
     return redirect('inventario')
 
+@login_required
 def generarBoleta(request):
-    camara = Camara.objects.all()
+    camaras = Camara.objects.all()
 
     carrito = request.session.get('carrito', None)
     if not carrito:
@@ -166,8 +135,8 @@ def generarBoleta(request):
     for key, value in carrito.items():
         precio_total += int(value['precio']) * int(value['cantidad'])
 
-    # Crear la boleta
-    boleta = Boleta(total=precio_total)
+    # Crear la boleta y asignar el usuario actual
+    boleta = Boleta(total=precio_total, usuario=request.user)
     boleta.save()
 
     # Crear los detalles de la boleta
@@ -181,17 +150,16 @@ def generarBoleta(request):
 
     datos = {
         'productos': productos,
-        'fecha': boleta.fechaCompra,
+        'fecha': boleta.fechaCompra,  # Asegúrate de tener este campo definido en tu modelo Boleta
         'total': boleta.total,
         'id_boleta': boleta.id_boleta,
-        'camara': camara
+        'camaras': camaras  # Asegúrate de pasar camaras en el contexto si lo necesitas en la plantilla
     }
     
     request.session['boleta'] = boleta.id_boleta
 
-    # Vaciar el carrito
-    carrito = Carrito(request)
-    carrito.vaciar()
+    # Vaciar el carrito después de generar la boleta
+    request.session['carrito'] = {}
 
     return render(request, 'carrito/detallecarrito.html', datos)
 
@@ -202,8 +170,22 @@ def detalleCarrito(request):
     return render(request, 'carrito/detallecarrito.html', {'carrito_vacio': carrito_vacio, 'carrito': carrito})
 
 
-
-@login_required
+@admin_required()
 def historial_boletas(request):
-    boleta=DetalleBoleta.objects.all()
-    return render(request, 'crud/historial_boletas.html', {'boleta':boleta})
+    boletas = Boleta.objects.all().distinct()
+
+    compras = []
+    for boleta in boletas:
+        detalles = DetalleBoleta.objects.filter(id_boleta=boleta)
+        for detalle in detalles:
+            compras.append({
+                'boleta': boleta,
+                'detalle': detalle,
+                'usuario': boleta.usuario,
+                'producto': detalle.id_producto.nombreCamara,
+                'cantidad': detalle.cantidad,
+                'subtotal': detalle.subtotal
+
+            })
+
+    return render(request, 'crud/historial_boletas.html', {'compras': compras })

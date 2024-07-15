@@ -51,20 +51,4 @@ def exit(request):
     logout(request)
     return redirect('inicio')
 
-def recuperar(request):
-    return render(request, 'registration/recuperar.html')
-
-
-def enviar_correo(request):
-    send_mail(
-        'prueba',
-        'hecho con fines historicos',
-        'tecuidosecu1234@gmail.com',
-        ['ni.vasquezc@duocuc.cl','ser.moreno@duocuc.cl'],
-        fail_silently=False,
-    )
-    return redirect('frame_correo')
-
-def cargar_frame_correo(request):
-    return render(request, 'tests/emailtest.html')
 

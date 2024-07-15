@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import *
-from .api import *
 
 urlpatterns = [
     path('mercado/', inventario_view, name='inventario'),
@@ -15,7 +14,6 @@ urlpatterns = [
     path('mercado/restar/<id>/',restar_producto, name='restar'),
     path('mercado/limpiar/',limpiar_carrito, name='limpiar'),
     path('mercado/generarBoleta/',generarBoleta, name='generarBoleta'),
-    path('api/list/', ProductoList.as_view(), name='list'),
     path('historial/', historial_boletas, name='historial_boletas')
 
 
